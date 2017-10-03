@@ -15,7 +15,7 @@ type client struct {
 func (c *client) read() {
 	for {
 		if _, msg, err := c.socket.ReadMessage(); err == nil {
-			c.room.forward <- []byte("[" + strconv.Itoa(c.ID) + "]" + string(msg))
+			c.room.forward <- []byte("[" + strconv.Itoa(c.ID) + "] " + string(msg))
 		} else {
 			break
 		}
