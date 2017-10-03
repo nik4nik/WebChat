@@ -1,17 +1,21 @@
 package main
 
-import "github.com/gorilla/websocket"
+import (
+	"github.com/gorilla/websocket"
+	"strconv"
+)
 
 type client struct {
 	socket *websocket.Conn
 	send   chan []byte // channel on which messages are sent to the user's browser
 	room   *room
+	ID     int
 }
 
 func (c *client) read() {
 	for {
 		if _, msg, err := c.socket.ReadMessage(); err == nil {
-			c.room.forward <- msg
+			c.room.forward <- []byte("[" + strconv.Itoa(c.ID) + "]" + string(msg))
 		} else {
 			break
 		}

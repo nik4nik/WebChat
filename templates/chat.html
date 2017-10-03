@@ -6,9 +6,9 @@
 	<input type=submit>
 </fieldset>
 </form>
-<form id=upload method=POST enctype="multipart/form-data">
+<form id=upload>
 	<input type=file name=myFile>
-	<input type=submit value=Upload>
+	<input type=submit>
 </form>
 <script>
 var socket = new WebSocket('ws://localhost:8080/room')
@@ -22,12 +22,17 @@ publish.onsubmit = () => {
 socket.onmessage = e =>	{
 	var li = document.createElement('li')
 	li.innerHTML  = e.data
-	chat.appendChild(li);
+	chat.appendChild(li)
 }
-upload.onsubmit = () => {
+upload.onsubmit = e => {
+	e.preventDefault() 
 	if ((upload.myFile.files[0].size) > 1 << 30) {
 		alert("Size of the file is more then 1Gb. Upload is impossible")
-		return false
 	}
+	var formData = new FormData(upload),
+		xhr = new XMLHttpRequest()
+	xhr.open("POST", "/")
+	xhr.send(formData)
+	upload.myFile.value = ""
 }
 </script>

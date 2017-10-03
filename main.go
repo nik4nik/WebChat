@@ -38,7 +38,7 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		defer dst.Close()
 
-		buf := make([]byte, 250*1024*1024)
+		buf := make([]byte, 250<<20)
 		if _, err := io.CopyBuffer(dst, src, buf); err != nil {
 			log.Fatal(err)
 		}

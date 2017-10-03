@@ -48,6 +48,7 @@ const (
 )
 
 var upgrader = &websocket.Upgrader{ReadBufferSize: socketBufferSize, WriteBufferSize: socketBufferSize}
+var ID = 0
 
 func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	socket, err := upgrader.Upgrade(w, req, nil)
@@ -55,10 +56,12 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		log.Fatal("ServeHTTP:", err)
 		return
 	}
+	ID++
 	client := &client{
 		socket: socket,
 		send:   make(chan []byte, messageBufferSize),
 		room:   r,
+		ID:     ID,
 	}
 	r.join <- client
 	defer func() { r.leave <- client }()
