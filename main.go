@@ -24,7 +24,7 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	})
 	t.templ.Execute(w, nil)
 	if r.Method == "POST" {
-		src, hdr, err := r.FormFile("myFile")
+		src, hdr, err := r.FormFile("file")
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return

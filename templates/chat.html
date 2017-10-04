@@ -1,7 +1,5 @@
 <title>Chat</title>
-<style>
-	li {list-style-type: none}
-</style>
+<style>	li {list-style-type: none}</style>
 <ul id=chat></ul>
 <form id=publish style=width:250>
 <fieldset>
@@ -10,15 +8,13 @@
 </fieldset>
 </form>
 <form id=upload>
-	<input id=file type=file name=myFile>
+	<input id=file type=file name=file>
 	<input id=btSend type=submit disabled=true>
 </form>
 <script>'use strict'
 var socket = new WebSocket('ws://localhost:8080/room')
 socket.onmessage = e =>	{
-	var li = document.createElement('li')
-	li.innerHTML  = e.data
-	chat.appendChild(li)
+	chat.innerHTML += '<li>' + e.data
 }
 publish.onsubmit = () => {
 	if (txt.value) {
@@ -32,16 +28,15 @@ file.onchange = () => {
 	btSend.disabled = false
 }
 upload.onsubmit = e => {
-	e.preventDefault() 
-	if ((upload.myFile.files[0].size) > 1 << 30) {
-		alert("Size of the file is more then 1Gb. Upload is impossible")
-	}
-	var formData = new FormData(upload),
-		xhr = new XMLHttpRequest()
-	xhr.open("POST", "/")
-	xhr.send(formData)
-	btSend.value = "File is sent"
+	e.preventDefault()
 	btSend.disabled = true
-	upload.myFile.value = ""
+	if (file.files[0].size < 1 << 30) {
+		var xhr = new XMLHttpRequest()
+		xhr.open("POST", "/")
+		xhr.send(new FormData(upload))
+		btSend.value = "File is sent"
+	} else
+		alert("File size > 1Gb. Upload is discarded")
+	file.value = ""
 }
 </script>
